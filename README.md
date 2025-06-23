@@ -2,6 +2,10 @@
 
 A modern, responsive Business Intelligence dashboard built with React and Node.js/Express. This application displays a list of reports fetched from a REST API and allows users to filter reports by category.
 
+## 🌐 Live Example
+
+You can view a live demo of this application at: **[reports.schofield.dev](https://reports.schofield.dev)**
+
 ## 🚀 Features
 
 ### Frontend (React)
