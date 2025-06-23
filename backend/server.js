@@ -12,7 +12,13 @@ const PORT = process.env.PORT || 5555;
 const isProduction = process.env.NODE_ENV === "production";
 
 // Middleware
-app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: false,
+    })
+);
 
 app.use(
     cors({
