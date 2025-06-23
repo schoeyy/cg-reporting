@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for BI Dashboard
+# Debug version of Dockerfile for BI Dashboard
 # Stage 1: Build Frontend
 FROM node:18-alpine AS frontend-builder
 
@@ -8,13 +8,16 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 
 # Install frontend dependencies
-RUN npm ci --only=production
+RUN npm install
 
 # Copy frontend source code
 COPY frontend/ ./
 
-# Build the React app
-RUN npm run build
+# Build the React app with verbose output
+RUN echo "🔨 Building React app..." && \
+    npm run build && \
+    echo "✅ React build complete" && \
+    ls -la build/
 
 # Stage 2: Build Backend
 FROM node:18-alpine AS backend-builder
@@ -25,7 +28,7 @@ WORKDIR /app/backend
 COPY backend/package*.json ./
 
 # Install backend dependencies
-RUN npm ci --only=production
+RUN npm install
 
 # Copy backend source code
 COPY backend/ ./
@@ -49,7 +52,12 @@ COPY --from=backend-builder /app/backend ./backend
 COPY start.sh ./start.sh
 RUN chmod +x ./start.sh
 
-# Expose port
+# Debug: List contents
+RUN echo "📁 App directory contents:" && ls -la && \
+    echo "📁 Public directory contents:" && ls -la public/ && \
+    echo "📁 Backend directory contents:" && ls -la backend/
+
+# Expose port 5555 (backend port)
 EXPOSE 5555
 
 # Health check
@@ -57,4 +65,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:5555/api/health || exit 1
 
 # Start the application
-CMD ["./start.sh"] 
+CMD ["./start.sh"]
